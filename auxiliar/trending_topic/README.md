@@ -13,11 +13,12 @@ be easy to define.
 
 ## Which topics are we missing?
 
-For this part we will use a pretrained word embedding in order to return the most similar topics to our topics. Since some of them are available online, we will not implement it as our part of our code.
-
+For this part we will use a pretrained word embedding in order to return the most similar topics to our topics.
+Since some of them are available online, we will not implement it as our part of our code.
 In this case we used sense2vec which demo is available here: https://explosion.ai/demos/sense2vec
+In this wordembedding we can query any doc and it will calculate the most similar topics.
+When we query, for instance, 'data analytics', the most similar topics are:
 
-Where when we query, for instance, 'data analytics', the most similar topics are:
 
 | Topic                | similarity |
 | -------------------- | ---------- |

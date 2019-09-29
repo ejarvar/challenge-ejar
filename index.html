@@ -29,7 +29,7 @@
             }
         </style>
     </head>
-    <body>
+    <body style="background-color:#E3FFFE;">
         <div class="container" align="justify">
 
 <h1 style="text-align:center">Challenge solution </h1>
@@ -143,13 +143,10 @@ list(
 </p>
 
 <pre data-executable data-theme="summerfruit">
-# Trending topic
-# The class BBVAChallenge imports from TrendingTopic
-# from auxiliar.data_preparation.DataPreparation import TrendingTopic
 
-from BBVAChallenge import trending_topic_display, trending_topic_train
+    from BBVAChallenge import trending_topic_display
 
-# For making a querying from the already trained model
+# Querying from the already trained model
 trending_topic_display(
     "models/trending_topic.pickle",
     "models/trending_topic_matrix.csv",
@@ -157,6 +154,64 @@ trending_topic_display(
 )
 
 </pre>
+
+<h3>Which topics are we missing?</h3>
+<p>
+        For this part we will use a pretrained word embedding in order to return the most similar topics to our topics.
+        Since some of them are available online, we will not implement it as our part of our code.
+        In this case we used sense2vec which demo is available here: https://explosion.ai/demos/sense2vec
+        In this wordembedding we can query any doc and it will calculate the most similar topics.
+        When we query, for instance, 'data analytics', the most similar topics are:
+
+        <table>
+                <tr>
+                    <th><b>Topic</b></th>
+                    <th>Similarity</th>
+                </tr>
+                <tr>
+                    <td><b>data science</b></td>
+                    <td>86%</td>
+                </tr>
+                <tr>
+                    <td><b>big data</b></td>
+                    <td>83%</td>
+                </tr>
+                <tr>
+                    <td><b>data analysis</b></td>
+                    <td>83%</td>
+                </tr>
+                <tr>
+                    <td><b>software development</b></td>
+                    <td>83%</td>
+                </tr>
+                <tr>
+                    <td><b>business intelligence</b></td>
+                    <td>82%</td>
+                </tr>
+                <tr>
+                    <td><b>database management</b></td>
+                    <td>81%</td>
+                </tr>
+                <tr>
+                    <td><b>project management</b></td>
+                    <td>81%</td>
+                </tr>
+                <tr>
+                    <td><b>machine learning</b></td>
+                    <td>80%</td>
+                </tr>
+                <tr>
+                    <td><b>web development</b></td>
+                    <td>80%</td>
+                </tr>
+                <tr>
+                    <td><b>database development</b></td>
+                    <td>80%</td>
+                </tr>
+        </table>
+
+
+</p>
 
 <h2>Recommender engine</h2>
 <p>
@@ -175,13 +230,10 @@ trending_topic_display(
 </p>
 
 <pre data-executable data-theme="summerfruit">
-# Article Recommender
-# The class BBVAChallenge imports from ArticleRecommender
-# from auxiliar.data_preparation.DataPreparation import ArticleRecommender
 
-from BBVAChallenge import article_recommender_train, article_recommender_query
+from BBVAChallenge import article_recommender_query
 
-# For querying from the already trained model
+# Querying from the already trained model
 article_recommender_query(
     "models/recommender.pickle",
     "models/recommender_tfidf.csv",
@@ -218,9 +270,10 @@ article_recommender_query(
 </p>
 
 <h2>The Bounce Rate</h2>
-<p>Sources: 
-    https://www.optimizesmart.com/two-powerful-ways-to-reduce-bounce-rate/
-    https://support.google.com/analytics/answer/1009409?hl=en
+<p>
+    Sources: 
+    <a href="https://www.optimizesmart.com/two-powerful-ways-to-reduce-bounce-rate/" target="Bounce rate">Bounce Rate</a>
+    <a href="https://support.google.com/analytics/answer/1009409?hl=en" target="Google analytics">Google Analytics</a>
 </p>
 
 <p>
