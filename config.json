@@ -1,0 +1,5 @@
+{
+    "path_scraping": "dataset/blog_scraping.json",
+    "path_analytics": "dataset/blog_analytics.csv",
+    "path_processed": "dataset"
+}

@@ -3,5 +3,4 @@ env*
 .vscode
 __pycache__*
 tasks
-config.json
 .ipynb_checkpoints
