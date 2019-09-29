@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>challenge-ejar</title>
+        <meta charset="utf-8">
+        <!-- some CodeMirror themes -->
+        <link rel="stylesheet" href="https://codemirror.net/theme/monokai.css" />
+        <link rel="stylesheet" href="https://s3-us-west-2.amazonaws.com/s.cdpn.io/316871/summerfruit.css" />
+        <link rel="stylesheet" href="https://s3-us-west-2.amazonaws.com/s.cdpn.io/316871/fairyfloss.css" />
+        <!-- demo styles -->
+        <style>
+            .container { max-width: 600px; margin: 5rem auto; }
+            .container > * { margin-bottom: 4rem; }
+            table {
+                font-family: arial, sans-serif;
+                border-collapse: collapse;
+                width: 100%;
+            }
+            td, th {
+            border: 1px solid#dddddd;
+            text-align: left;
+            padding: 8px;
+            }
+            tr:nth-child(even) {
+            background-color: #dddddd;
+            }
+            body, td {
+            font: 14px "Trebuchet MS";
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container" align="justify">
+
+<h1 style="text-align:center">Challenge solution </h1>
+<p>This is the solution of the challenge for the Data & Analytics <i>department</i>
+    implemented by Ejar.
+    Keywords such as the name <i>brand</i> name and the <i>author</i> are not mentioned in order
+    to make it harder to find using a search engine.
+</p>
+
+<table>
+        <tr>
+            <td><b>Programming language</b></td>
+            <td>Python</td>
+            <td>version = 3.7.3</td>
+        </tr>
+        <tr>
+            <td><b>Code style</b></td>
+            <td>black</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><b>Source-code editor</b></td>
+            <td>Visual Studio Code</td>
+            <td>environment = WSL</td>
+        </tr>
+
+
+      </table>
+
+<h2>Merging the datasets</h2>
+<p>
+    We have two datasets containing information from the Data & Analytics department webpage.
+    The first dataset is a JSON file containing text and some attributes of each blog in a list.
+    The second dataset is a CSV containing the google analytics information from each URL related to
+    the webpage.
+
+    These two files need to be preprocessed in a way were both datasets follow the same structure.
+    The steps we will follow are:
+    <ol>
+        <li>Define which tool can provide us with data manipulation operations, machine learning
+            and data analysis features according to the amount of data we have.
+        </li>   
+        <li>Define a key attribute that both datasets can use for merging</li>
+        <li>Define the datatype of each feature on both datasets</li>
+        <li>Preprocessing and Mergin the data?</li>
+    </ol>
+
+    <h3>1. Since we are not manipulating big amounts of data, the tool we will use for manipulating the data is Pandas</h3>
+    <p>This library offers us all the features we are looking for for this task by working with 
+        DataFrame objects.</p>
+        <h3>2. Key attributes</h3>
+    <p>The key attribute we will use is the URL in the JSON file and PAGE in the CSV file.
+        Since both keys do not have an exact match, we also need to preprocess both attributes as strings
+        where we look for a string match from one inside the other. This way of matching the keys, also
+        help us by removing all the URLs that are not giving us any information for future analysis.
+    </p>
+    <h3>Defining the datatypes of of each attribute</h3>
+    <p>Since no information from the datatype of any attribute was provided, to define properly the datatypes, we need to do an
+        exploratory analysis first; doing it in advance might not be totally accurate and could need some extra changes later.
+        Therefore, we will read each feature as strings first.
+    </p>
+    <h3>Merging the data?</h3>
+    <p>The content of each blog also contained some noise related to the html
+        structure, to remove this, some regular expressions were needed to apply in order
+        to delete it.
+        In this case, both datasets do not need to be merged in advance. Since both datasets now
+        have a common structure, we should just read them and use pandas operations such as merge and group by
+        when needed while doing our studies.
+    </p>
+
+<pre data-executable data-theme="summerfruit">
+# Blog scraping file
+from BBVAChallenge import *
+pd.read_csv("dataset/processed_scraping.csv", sep="|").drop("content", axis=1).head(2)
+</pre>
+
+<pre data-executable data-theme="summerfruit">
+# Blog analytics file
+from BBVAChallenge import *
+list(
+  pd.read_csv("dataset/processed_analytics.csv", sep="|") 
+)
+</pre>
+
+<h2>Identifying trending topics</h2>
+<p>
+    To identify the trending topics in our blogs, we will use a topic modelling
+    algorithm.
+    We want to have some representation of each document in a matrix to feed any algorithm.
+    We will do this by defining a matrix that can represent how important is a word to a document
+    in a collection of documents according to its frequency.
+
+    First, we started with some data preprocessing techniques.
+    <ol>
+        <li>Tokenization using Spacy tokenization rules for Spanish</li>
+        <li>Removing stopwords. Spacy's list of Spanish stopwords</li>
+        <li>Lowercasing</li>
+        <li>For the words representation, we did not use any embedding lemmatization or
+            stemming process.
+            The stemming approach, since it is a heuristic approach, it could
+            return nonsensical stems.
+            For the lemmatization, our alternative is to use a pretrained model
+            like the one provided from spacy but the training takes longer times
+            and it is not necessary for this task.
+            (Only one line of code has to be modified)
+        </li>
+    </ol>
+
+    We trained a model where we only use the top 500 words and we want to see only
+    the top 10 topics.
+</p>
+
+<pre data-executable data-theme="summerfruit">
+# Trending topic
+# The class BBVAChallenge imports from TrendingTopic
+# from auxiliar.data_preparation.DataPreparation import TrendingTopic
+
+from BBVAChallenge import trending_topic_display, trending_topic_train
+
+# For making a querying from the already trained model
+trending_topic_display(
+    "models/trending_topic.pickle",
+    "models/trending_topic_matrix.csv",
+    20, # Number words per topic to show
+)
+
+</pre>
+
+<h2>Recommender engine</h2>
+<p>
+    A recommender system can be anything, we could implement a system that
+    randomly returns any article as a suggestion to the reader, we can think of
+    learning from the user and suggest them articles related to their taste.
+    We can also analyse the article that was read by the user and recommend a similar
+    one.
+    Defining which method to follow, relies on the data we have.
+    In our case, do not have information from each user but we do have
+    information from each document. Therefore, we will use the last option that
+    creates a representation of each article by using a similar approach we 
+    used in our trending topic system.
+    With this vectorized representation we will recommend the user an article that
+    has a similar representation to the one who is currently reading. 
+</p>
+
+<pre data-executable data-theme="summerfruit">
+# Article Recommender
+# The class BBVAChallenge imports from ArticleRecommender
+# from auxiliar.data_preparation.DataPreparation import ArticleRecommender
+
+from BBVAChallenge import article_recommender_train, article_recommender_query
+
+# For querying from the already trained model
+article_recommender_query(
+    "models/recommender.pickle",
+    "models/recommender_tfidf.csv",
+    "Lo más relevante de la ciencia de datos en 2018",
+    10,
+)
+
+</pre>
+
+<h2>Most successful post</h2>
+<p>Studying the most successful post requires an exploratory analysis of the scraping dataset.
+    In addition, while doing this exploratory analysis, we can also understand more our data, therefore, 
+    we will be able to give our dataset a better structure by defining each feature datatype and have better feature naming.</p>
+<p>For this part we used two approaches, we used graphical methods for identifying the most successful post 
+    and we also use an statistical analysis.
+    Our studies showed:
+    From our graphical method and our statistical method (excluding bounce rate), 
+    we found that the most successful post is: 
+    Los Mejores Másteres de Ciencia de Datos para Considerar este Verano - BBVA Data & Analytics 
+    This is due to the high number of page views, user views and unique page views. As we saw at the scatter plot, 
+    this article is an evident outlier. 
+    On the other hand, when we include the bounce rate to our statiscal method. 
+    The most successful post is:
+    Transforming a Bank into a Data-Driven Business - BBVA Data & Analytics 
+    This post has a low bounce rate, which value is way better than our other result. 
+    The conclusion we can obtain from both results is that it depends on how we want to define a successful post, 
+    for example, when an article has a low bounce rate, it could mean that people that finds the article more attractive,
+    therefore, they tend to stay and read it all and made the user check similar posts and for us this could mean that the posts is successful.
+    Or on the other hand, if we are focusing on how this article was able to attract more people, maybe due to a marketing strategy,
+    where showing the brand and this topic was reason of the publication, then the post with higher visits is the most successful one.
+</p>
+<p>The complete analysis can be checked here:</p>
+    <a href="https://mybinder.org/v2/gh/ejarvar/challenge-ejar/master?filepath=%2Fnotebooks%2Fmost_successful_post_and_exploratory_analysis.ipynb" target="Most successful post - Exploratory analysis">Most successful post - Exploratory analysis</a>
+</p>
+
+<h2>The Bounce Rate</h2>
+<p>Sources: 
+    https://www.optimizesmart.com/two-powerful-ways-to-reduce-bounce-rate/
+    https://support.google.com/analytics/answer/1009409?hl=en
+</p>
+
+<p>
+    <ul>
+        <li>First: In order to introduce successfull measures against a high bounce rate, the term bounce rate must be determined precisely. 
+            As the proposed source is stating, a bounce equals to "a single-page session" on the corresponding site/landing page. 
+            More in detail: "a session that triggers only a <b>single request to the Analytics server</b>, 
+            such as when a <b>user opens a single page</b> on your site and then <b>exits without triggering any other requests to the Analytics server</b>
+            during that session" (see provided link https://support.google.com/analytics/answer/1009409?hl=en). 
+            Consequently, the bounce rate results as number of single-page sessions divided by all sessions within a certain time period.
+        </li>
+        <li>Second: This technical explanation can be expanded by a qualitative perspective on the content of the landing page itself: 
+            the content did not seem to have engaged the user up to the amount to exploring other websites connected to and therefore 
+            beyond this particular landing page.
+        </li>
+        <li>Third: As the source also is stating, the effect of a high bounce rate highly depends on the character of the underlying landing page. 
+            A main page, which clearly works as a connection between other related sites, should engange the user to visit more pages, 
+            and should have a low bounce rate. On the other hand, a blog post being perfectly able to exist alone without 
+            the need of any other blog posts can have a higher bounce rate without raising any suspicions. 
+            Of course it is wished that the user continues reading other blog posts, 
+            but maybe the user came for a particular reason from a particular source and returns to that source after finishing to read. 
+            Since we are only focussing the analysis on blog posts, the higher bounce rate might be much less of a problem in general, 
+            even though some suggestions for lowering it are still provided. 
+        </li>
+    </ul>
+</p>
+<p>
+    Following these three definitions and perspectives, there are several ways to technically lower the bounce rate of a website:
+    <ul>
+        <li> 1) & 3): When the bounce rate only includes single requests, lowering the bounce rate naturally results from increasing the number of
+            requests the user is making. This technical increasing is done for instance by defining particular events the user is triggering 
+            which are tracked via specific event tracking code (on the website). Since at least two request to the server will be noted, 
+            the session will automatically not be counted as single request bounce. Potential events might be: the user enters the landing 
+            page and needs to press a play button in order to play the video he/she was intended to watch. By pressing the play button which 
+            is wired with the tracking code, the second request is sent to the analytics server. This can also be done automatically, 
+            without requiring the user to actually press the play button. As soon as the user enters the webpage, the video plays. 
+            The only thing to be made sure is that the play button is tracked by event tracking code. Alternatively, 
+            the user also can trigger a social event such as sharing the article he/she just read. The sharing would be tracked by tracking code, 
+            causing the second request to be sent to the analytics server. 
+            When following this strategy, is has to be kept in mind that the user still only visits that single website without 
+            browsing further sites. Only the way of counting is adjusted to lead to a lower bounce rate. However, 
+            in case of blog posts, which result in single requests due to their purpose (to inform the user about a certain topic 
+            aka the user creates a conversion by simply staying at this single page and reading it), 
+            an adjustment of bounce rate is strongly recommended to avoid misleading statistics such as a 100% very high bounce rate, 
+            even though the task of the website was fullfilled and the user converted. 
+        </li>
+        
+        <li> 
+            2) From the point of view of the website's contents, the user was not engaged enough to browse other, maybe related websites. 
+            Therefore, is has to be guaranteed that the content of the landing page satisfy the user's query 
+            (e.g. when talking about text mining, no article about decision trees should represent the landing page instead). 
+            The more the website satisfies the query, the more unlikely the user will bounce. 
+            Closely related to query relevant content also the source of the visit must be taken into account: 
+            keywords or marketing channels which target a high number of users but the quality of those users is low, 
+            should be avoided. This "poor" traffic will more likely bounce and not convert, therefore these visitors are not relevant 
+            for the product anyway. 
+            Additionally, also the so-called call to action must be clearly visible. In case of a blog post, 
+            the user must be successfully guided through the story by using headings, sub-headings, images or other directional clues. 
+            In case of blog posts, related blogs might be highlighted at the end of the original blog post 
+            (topic related, recommendation by other readers etc.). 
+            This keeps the user browsing the website, giving him/her a need to explore more topics. 
+        </li>
+        <li> 
+            And last but not least, the content must be presented in an appealing way to the user, so e.g. nice font, 
+            images, clear navigation, using responsive design, enough white space between font/paragraphs, headings etc. 
+            The website contents also must load in reasonable time. However, for a sample of blogs from your website, 
+            this criteria seem to be fullfilled already, which leaves no recommendation open for this topic. 
+        </li>
+    </ul>
+</p>
+<h2>Additional data suggestions</h2>
+<p>
+    <ul>
+        <li>
+            For getting more information about the engagement of the user on the website, events should be defined and tracked by code 
+            (e.g. playing a video, sharing the article, filling in a form etc.) and those statistics also returned for analysis
+        </li>
+        <li>
+            Better relations between blog posts and therefore higher engagement of the user is expected, when the blog posts are tagged 
+            by keywords (e.g. topic related) and also show e.g. Top 3 articles being very similar to the just read post. 
+        </li>
+        <li>
+            Add topic/keyword cloud at the side of the text to give user information, what other topics he/she can research on the website.
+        </li>
+        <li>
+            More about the content of the post itself, whether a video/images are embedded, if yes, how many. 
+            Whether headings and sub-headings are used and the number of headings in the article. Whether links are embedded (and how many), 
+            even distinguishing between links leading to another internal page (other blog posts) or external websites. 
+        </li>
+        <li>        
+            More information about the source: whether this source was an ad (paid) or unpaid (e.g. the blog post was mentioned in another article)
+            and when it was an add, the impressions and clicks of the ad in order to determine whether the actual number of users is good.
+        </li>
+        <li>
+            More information about the device on which the blog post was read: e.g. the operating system of the device 
+            (for tablet and mobile) or the browser for desktop (firefox vs. chrome etc.), 
+            this helps finding clusters of especially engaged readers, improving the quality of ads (e.g. targeting only those readers) 
+        </li>
+        <li>
+            Adding information about errors: e.g. when the blog post website was not loading or network connections failed. 
+            Google Analytics provides a list of errors which can be defined to be tracked and used for further analysis.
+        </li>
+    </ul>
+</p>
+
+
+        </div>
+
+        <script src="dist/juniper.min.js"></script>
+        <script>
+            new Juniper({
+                repo: 'ejarvar/challenge-ejar'
+            });
+            // listen to status updates
+            document.addEventListener('juniper', ev =>
+                console.log('Status:', ev.detail.status))
+        </script>
+
+        <!-- GitHub link in corner -->
+        <a href="https://github.com/ejarvar/challenge-ejar" class="github-corner" aria-label="View source on Github"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#000; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+    </body>
+</html>

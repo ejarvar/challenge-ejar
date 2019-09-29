@@ -1,0 +1,7 @@
+env*
+*.code-workspace
+.vscode
+__pycache__*
+tasks
+config.json
+.ipynb_checkpoints
